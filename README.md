@@ -1,2 +1,2 @@
-# chronicler
+# Chronicler
 Runtime history controller for Roblox.
