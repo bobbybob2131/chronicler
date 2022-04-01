@@ -28,7 +28,7 @@ local DEBUG: boolean = true
 local output: (...) -> ()
 if DEBUG then
 	output = function(...)
-		warn(...)
+		print("[Chronicler]", ...)
 	end
 else
 	output = function() end
@@ -91,6 +91,7 @@ function chronicler.new(object: any, captureProperties: {string | number}, undoS
 		while #self.undoStack > 30 do
 			table.remove(self.undoStack, 1)
 		end
+		output("Set Waypoint:", data)
 	end
 	
 	-- Undo most recent action
@@ -108,6 +109,7 @@ function chronicler.new(object: any, captureProperties: {string | number}, undoS
 		self.undoStack[#self.undoStack] = nil
 		
 		self.OnUndo._bindable:Fire()
+		output("Undo:", waypoint)
 	end
 	
 	-- Redo the last action that was undone
@@ -127,21 +129,24 @@ function chronicler.new(object: any, captureProperties: {string | number}, undoS
 		self.redoStack[#self.redoStack] = nil
 		
 		self.OnRedo._bindable:Fire()
-		output("redo", waypoint.Text)
+		output("Redo:", waypoint)
 	end
 
 	-- Clears history, removing all undo/redo waypoints
 	function chroniclerObject:ResetWaypoints()
 		table.clear(self.undoStack)
 		table.clear(self.redoStack)
+		output("Waypoints reset")
 	end
 	
 	-- Get last undo-able action, if it exists
 	function chroniclerObject:GetCanUndo(): boolean | waypoint
 		local lastPoint: waypoint = self.undoStack[1]
 		if not lastPoint then
+			output("Cannot undo")
 			return false
 		else
+			output("Can undo")
 			return lastPoint
 		end
 	end
@@ -150,8 +155,10 @@ function chronicler.new(object: any, captureProperties: {string | number}, undoS
 	function chroniclerObject:GetCanRedo(): boolean | waypoint
 		local lastPoint: waypoint = self.undoStack[1]
 		if not lastPoint then
+			output("Cannot redo")
 			return false
 		else
+			output("Can redo")
 			return lastPoint
 		end
 	end
@@ -163,6 +170,7 @@ function chronicler.new(object: any, captureProperties: {string | number}, undoS
 		if state == false then
 			self:ResetWaypoints()
 		end
+		output("Enabled state set to:", state)
 	end
 	
 	-- Set the stacks, to flip between saved states
@@ -173,6 +181,7 @@ function chronicler.new(object: any, captureProperties: {string | number}, undoS
 		if redoStack then
 			self.redoStack = redoStack
 		end
+		output("Stacks overriden, undo stack:", undoStack, "\nRedo Stack:", redoStack)
 	end
 	
 	-- Permanently delete a chronicler object
@@ -186,6 +195,7 @@ function chronicler.new(object: any, captureProperties: {string | number}, undoS
 		self.enabled = nil
 		self.OnRedo._bindable:Destroy()
 		self.OnUndo._bindable:Destroy()
+		output("Destroyed")
 	end
 	
 	return chroniclerObject
