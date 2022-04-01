@@ -7,7 +7,7 @@
 constructor chronicler.new(object: any, captureProperties: {string | number}, undoStackSize: number?, redoStackSize: number?): Chronicler 
 	Create a new chronicler object, `captureProperties` is an array of properties to capture in waypoints
 
-method Chronicler:SetWaypoint(name: string) Save the current state of the object as a waypoint
+method Chronicler:SetWaypoint() Save the current state of the object as a waypoint
 method Chronicler:Undo() Undo most recent action
 method Chronicler:Redo() Redo the last action that was undone
 method Chronicler:ResetWaypoints() Clears history, removing all undo/redo waypoints
@@ -17,11 +17,22 @@ method Chronicler:SetEnabled(state: boolean?) Set whether or not this chronicler
 method Chronicler:OverrideStacks(undoStack: waypointStack?, redoStack: waypointStack?) Set the stacks, to flip between saved states
 method Chronicler:Destroy() Permanently delete a chronicler object
 
-RBXScriptSignal chroniclerObject.OnUndo Fired when a waypoint is undone with the name of the point
-RBXScriptSignal chroniclerObject.OnRedo Fired when a waypoint is redone with the name of the point
+RBXScriptSignal chroniclerObject.OnUndo Fired when a waypoint is undone
+RBXScriptSignal chroniclerObject.OnRedo Fired when a waypoint is redone
 ]]
 local chronicler = {}
 local signal = {}
+
+local DEBUG: boolean = true
+
+local output: (...) -> ()
+if DEBUG then
+	output = function(...)
+		warn(...)
+	end
+else
+	output = function() end
+end
 
 -- Create a new stripped down signal object
 function signal.new(): Signal
@@ -61,12 +72,10 @@ function chronicler.new(object: any, captureProperties: {string | number}, undoS
 	chroniclerObject.OnRedo = signal.new()
 	
 	-- Save the current state of the object as a waypoint
-	function chroniclerObject:SetWaypoint(name: string)
+	function chroniclerObject:SetWaypoint()
 		if not self.enabled then return end
 		
-		local data: waypoint = {
-			_name = name or "Unnamed Waypoint"
-		}
+		local data: waypoint = {}
 		for index: number, property: string | number in ipairs(self.captureProperties) do
 			local value: any = self.object[property]
 			if value then
@@ -91,7 +100,6 @@ function chronicler.new(object: any, captureProperties: {string | number}, undoS
 		local waypoint: waypoint = self.undoStack[#self.undoStack - 1]
 
 		if not waypoint then return	end
-		local name: string = waypoint._name
 		
 		for property: string | number, value: any in pairs(waypoint) do
 			self.object[property] = value
@@ -99,7 +107,7 @@ function chronicler.new(object: any, captureProperties: {string | number}, undoS
 		table.insert(self.redoStack, self.undoStack[#self.undoStack])
 		self.undoStack[#self.undoStack] = nil
 		
-		self.OnUndo._bindable:Fire(name)
+		self.OnUndo._bindable:Fire()
 	end
 	
 	-- Redo the last action that was undone
@@ -109,16 +117,17 @@ function chronicler.new(object: any, captureProperties: {string | number}, undoS
 		local waypoint: waypoint = self.redoStack[#self.redoStack]
 
 		if not waypoint then return	end
-		local name: string = waypoint._name
 		
 		for property: string | number, value: any in pairs(waypoint) do
+			output("redo back to", property, value)
 			self.object[property] = value
 		end
 
 		table.insert(self.undoStack, waypoint)
 		self.redoStack[#self.redoStack] = nil
 		
-		self.OnRedo._bindable:Fire(name)
+		self.OnRedo._bindable:Fire()
+		output("redo", waypoint.Text)
 	end
 
 	-- Clears history, removing all undo/redo waypoints
