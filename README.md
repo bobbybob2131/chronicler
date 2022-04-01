@@ -31,9 +31,9 @@ method Get last redo-able action, if it exists
 ```
 chroniclerObject:GetCanRedo(): boolean | waypoint
 ```
-method Set whether or not this chronicler object is enabled
+method Set whether or not this chronicler object is enabled, toggle if no state is provided
 ```
-chroniclerObject:SetEnabled(state: boolean)
+chroniclerObject:SetEnabled(state: boolean?)
 ```
 method Set the stacks, to flip between saved states
 ```
