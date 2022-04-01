@@ -44,7 +44,7 @@ end
 
 type waypoint = {[string | number]: any}
 type waypointStack = {[string]: number | string}
-export type Signal = typeof(signal.new())
+type Signal = typeof(signal.new())
 
 -- Create a new chronicler object
 function chronicler.new(object: any, captureProperties: {string | number}, undoStackSize: number?, redoStackSize: number?): Chronicler
@@ -167,7 +167,7 @@ function chronicler.new(object: any, captureProperties: {string | number}, undoS
 	end
 	
 	-- Permanently delete a chronicler object
-	function chronicler:Destroy()
+	function chroniclerObject:Destroy()
 		if self.object.ClassName then -- Object was an Instance of some sort
 			self.object:Destroy()
 		end
