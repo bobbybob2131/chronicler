@@ -49,7 +49,7 @@ export type Signal = typeof(signal.new())
 -- Create a new chronicler object
 function chronicler.new(object: any, captureProperties: {string | number}, undoStackSize: number?, redoStackSize: number?): Chronicler
 	local undoEvent: BindableEvent = Instance.new("BindableEvent")
-	local chroniclerObject: chroniclerObject = {
+	local chroniclerObject: Chronicler = {
 		object = object,
 		captureProperties = captureProperties,
 		undoStack = table.create(undoStackSize or 30),
