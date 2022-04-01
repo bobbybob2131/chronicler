@@ -4,18 +4,18 @@
 -- Description: Runtime equivalent of ChangeHistoryService, with some extra features.
 
 --[[
-constructor chronicler.new(object: any, captureProperties: {string | number}, undoStackSize: number?, redoStackSize: number?): chroniclerObject 
+constructor chronicler.new(object: any, captureProperties: {string | number}, undoStackSize: number?, redoStackSize: number?): Chronicler 
 	Create a new chronicler object, `captureProperties` is an array of properties to capture in waypoints
 
-method chroniclerObject:SetWaypoint(name: string) Save the current state of the object as a waypoint
-method chroniclerObject:Undo() Undo most recent action
-method chroniclerObject:Redo() Redo the last action that was undone
-method chroniclerObject:ResetWaypoints() Clears history, removing all undo/redo waypoints
-method chroniclerObject:GetCanUndo(): boolean | waypoint Get last undo-able action, if it exists
-method chroniclerObject:GetCanRedo(): boolean | waypoint Get last redo-able action, if it exists
-method chroniclerObject:SetEnabled(state: boolean?) Set whether or not this chronicler object is enabled, toggle if no state is provided
-method chroniclerObject:OverrideStacks(undoStack: waypointStack?, redoStack: waypointStack?) Set the stacks, to flip between saved states
-method chronicler:Destroy() Permanently delete a chronicler object
+method Chronicler:SetWaypoint(name: string) Save the current state of the object as a waypoint
+method Chronicler:Undo() Undo most recent action
+method Chronicler:Redo() Redo the last action that was undone
+method Chronicler:ResetWaypoints() Clears history, removing all undo/redo waypoints
+method Chronicler:GetCanUndo(): boolean | waypoint Get last undo-able action, if it exists
+method Chronicler:GetCanRedo(): boolean | waypoint Get last redo-able action, if it exists
+method Chronicler:SetEnabled(state: boolean?) Set whether or not this chronicler object is enabled
+method Chronicler:OverrideStacks(undoStack: waypointStack?, redoStack: waypointStack?) Set the stacks, to flip between saved states
+method Chronicler:Destroy() Permanently delete a chronicler object
 
 RBXScriptSignal chroniclerObject.OnUndo Fired when a waypoint is undone with the name of the point
 RBXScriptSignal chroniclerObject.OnRedo Fired when a waypoint is redone with the name of the point
@@ -47,7 +47,7 @@ type waypointStack = {[string]: number | string}
 export type Signal = typeof(signal.new())
 
 -- Create a new chronicler object
-function chronicler.new(object: any, captureProperties: {string | number}, undoStackSize: number?, redoStackSize: number?): chroniclerObject
+function chronicler.new(object: any, captureProperties: {string | number}, undoStackSize: number?, redoStackSize: number?): Chronicler
 	local undoEvent: BindableEvent = Instance.new("BindableEvent")
 	local chroniclerObject: chroniclerObject = {
 		object = object,
@@ -147,7 +147,7 @@ function chronicler.new(object: any, captureProperties: {string | number}, undoS
 		end
 	end
 	
-	-- Set whether or not this chronicler object is enabled, toggle if no state is provided
+	-- Set whether or not this chronicler object is enabled
 	function chroniclerObject:SetEnabled(state: boolean?)
 		state = state or not self.enabled
 		self.enabled = state
@@ -182,6 +182,6 @@ function chronicler.new(object: any, captureProperties: {string | number}, undoS
 	return chroniclerObject
 end
 
-export type chroniclerObject = typeof(chronicler.new({"a"}, {1}))
+export type Chronicler = typeof(chronicler.new({"a"}, {1}))
 
 return chronicler
