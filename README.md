@@ -4,42 +4,42 @@ Runtime equivalent of ChangeHistoryService, with some extra features. Feel free 
 ## API
 constructor Create a new chronicler object, `captureProperties` is an array of properties to capture in waypoints
 ```
-chronicler.new(object: any, captureProperties: {string | number}, undoStackSize: number?, redoStackSize: number?): chroniclerObject 
+chronicler.new(object: any, captureProperties: {string | number}, undoStackSize: number?, redoStackSize: number?): Chronicler 
 ```
 
 method Save the current state of the object as a waypoint
 ```
-chroniclerObject:SetWaypoint(name: string) 
+Chronicler:SetWaypoint(name: string) 
 ```
 method Undo most recent action
 ```
-chroniclerObject:Undo()
+Chronicler:Undo()
 ```
 method Redo the last action that was undone
 ```
-chroniclerObject:Redo()
+Chronicler:Redo()
 ```
 method Clears history, removing all undo/redo waypoints
 ```
-chroniclerObject:ResetWaypoints()
+Chronicler:ResetWaypoints()
 ```
 method Get last undo-able action, if it exists
 ```
-chroniclerObject:GetCanUndo(): boolean | waypoint
+Chronicler:GetCanUndo(): boolean | waypoint
 ```
 method Get last redo-able action, if it exists
 ```
-chroniclerObject:GetCanRedo(): boolean | waypoint
+Chronicler:GetCanRedo(): boolean | waypoint
 ```
 method Set whether or not this chronicler object is enabled, toggle if no state is provided
 ```
-chroniclerObject:SetEnabled(state: boolean?)
+Chronicler:SetEnabled(state: boolean?)
 ```
 method Set the stacks, to flip between saved states
 ```
-chroniclerObject:OverrideStacks(undoStack: waypointStack?, redoStack: waypointStack?)
+Chronicler:OverrideStacks(undoStack: waypointStack?, redoStack: waypointStack?)
 ```
 method Permanently delete a chronicler object
 ```
-chronicler:Destroy()
+Chronicler:Destroy()
 ```
