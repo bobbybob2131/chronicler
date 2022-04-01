@@ -13,7 +13,7 @@ method chroniclerObject:Redo() Redo the last action that was undone
 method chroniclerObject:ResetWaypoints() Clears history, removing all undo/redo waypoints
 method chroniclerObject:GetCanUndo(): boolean | waypoint Get last undo-able action, if it exists
 method chroniclerObject:GetCanRedo(): boolean | waypoint Get last redo-able action, if it exists
-method chroniclerObject:SetEnabled(state: boolean?) Set whether or not this chronicler object is enabled
+method chroniclerObject:SetEnabled(state: boolean?) Set whether or not this chronicler object is enabled, toggle if no state is provided
 method chroniclerObject:OverrideStacks(undoStack: waypointStack?, redoStack: waypointStack?) Set the stacks, to flip between saved states
 method chronicler:Destroy() Permanently delete a chronicler object
 
@@ -147,7 +147,7 @@ function chronicler.new(object: any, captureProperties: {string | number}, undoS
 		end
 	end
 	
-	-- Set whether or not this chronicler object is enabled
+	-- Set whether or not this chronicler object is enabled, toggle if no state is provided
 	function chroniclerObject:SetEnabled(state: boolean?)
 		state = state or not self.enabled
 		self.enabled = state
